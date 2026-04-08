@@ -114,6 +114,15 @@
         <div class="filter-label">📅 按花期</div>
         <div class="month-chips" id="month-filters"></div>
       </div>
+
+      <div class="filter-group">
+        <div class="filter-label filter-label-toggle" id="country-toggle">
+          🏳 按国家/地区<span class="toggle-arrow">▼</span>
+        </div>
+        <div class="country-chips-wrap collapsed" id="country-filters-wrap">
+          <div class="country-chips filter-chips" id="country-filters"></div>
+        </div>
+      </div>
     </div>
 
     <!-- 花卉列表 -->
@@ -137,6 +146,9 @@
     <button class="action-btn active" id="btn-auto-rotate" title="自动旋转">⏸ 暂停旋转</button>
     <button class="action-btn" id="btn-random" title="随机跳转花卉">🎲 随机花卉</button>
   </div>
+
+  <!-- 花瓣飘落效果容器 -->
+  <div id="petals-container"></div>
 
   <!-- 颜色图例 -->
   <div id="color-legend">

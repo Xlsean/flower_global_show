@@ -196,6 +196,10 @@ Place image files named after the flower's Chinese name in the `flowers/` direct
 
 Regional distribution: Asia 60, Europe 21, Americas 19, Africa 12, Oceania 8.
 
+## Feedback & Contributing
+
+Issues are welcome! Whether it's a bug report, feature request, or data correction — your feedback is greatly appreciated.
+
 ## License
 
 This project uses a custom license. See [LICENSE](./LICENSE) for details.

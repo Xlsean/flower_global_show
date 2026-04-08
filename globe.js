@@ -578,20 +578,24 @@ class GlobeRenderer {
     });
   }
 
-  // 旋转地球到指定位置，使花朵转到视图正中央
+  // 旋转地球到指定位置，使花朵转到视图正中央（最小旋转距离）
   rotateToFlower(flower) {
     const { lat, lng } = flower.location;
-    // 花卉在 globe 本地坐标系中的单位位置向量
     const pos = this.latLngToVector3(lat, lng, 1.0).normalize();
 
-    // globe 使用 YXZ 欧拉角顺序（先 Y 后 X）：
-    // 步骤1: rotY = -atan2(pos.x, pos.z)
-    //   绕 Y 轴旋转，使 pos 的 XZ 投影转到 +Z 方向
-    // 步骤2: rotX = -asin(pos.y)
-    //   绕 X 轴旋转，把 pos 的 Y 分量压到 0，让 pos 完全朝向 +Z（相机方向）
-    this.targetRotation.y = -Math.atan2(pos.x, pos.z);
-    this.targetRotation.x = -Math.asin(pos.y);
-    this.targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.targetRotation.x));
+    // globe 使用 YXZ 欧拉角（先 Y 后 X），相机在 +Z 方向。
+    // 要让 pos 旋转后指向 +Z：
+    // Step 1: rotY 把 pos 在 XZ 平面的投影转到 +Z 方向
+    const targetY = -Math.atan2(pos.x, pos.z);
+    // Step 2: rotX 把 Y 分量压到 Z 轴上
+    const targetX = -Math.asin(Math.max(-1, Math.min(1, pos.y)));
+
+    // 最小旋转距离：将 targetY 调整到 currentRotation.y 的 ±PI 范围内
+    let dy = targetY - this.currentRotation.y;
+    dy = dy - Math.round(dy / (2 * Math.PI)) * (2 * Math.PI);
+    this.targetRotation.y = this.currentRotation.y + dy;
+
+    this.targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetX));
     this.autoRotate = false;
   }
 

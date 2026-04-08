@@ -23,6 +23,7 @@ class FlowerUI {
       region: '全部',
       month: null,
       category: '全部类别',
+      country: '全部',
     };
 
     // 初始化各模块
@@ -171,6 +172,50 @@ class FlowerUI {
         monthContainer.appendChild(chip);
       });
     }
+
+    // 国家筛选（可折叠）
+    const countryToggle = document.getElementById('country-toggle');
+    const countryWrap = document.getElementById('country-filters-wrap');
+    const countryContainer = document.getElementById('country-filters');
+
+    if (countryToggle && countryWrap) {
+      countryToggle.addEventListener('click', () => {
+        const collapsed = countryWrap.classList.toggle('collapsed');
+        countryToggle.querySelector('.toggle-arrow').textContent = collapsed ? '▼' : '▲';
+      });
+    }
+
+    if (countryContainer) {
+      const countries = [...new Set(this.flowers.map(f => f.country))].sort((a, b) => a.localeCompare(b, 'zh'));
+
+      const allChip = document.createElement('button');
+      allChip.className = 'filter-chip active';
+      allChip.textContent = '全部';
+      allChip.dataset.value = '全部';
+      allChip.addEventListener('click', () => {
+        this.filters.country = '全部';
+        countryContainer.querySelectorAll('.filter-chip').forEach(c => {
+          c.classList.toggle('active', c.dataset.value === '全部');
+        });
+        this.applyFilters();
+      });
+      countryContainer.appendChild(allChip);
+
+      countries.forEach(country => {
+        const chip = document.createElement('button');
+        chip.className = 'filter-chip country-chip';
+        chip.textContent = country;
+        chip.dataset.value = country;
+        chip.addEventListener('click', () => {
+          this.filters.country = country;
+          countryContainer.querySelectorAll('.filter-chip').forEach(c => {
+            c.classList.toggle('active', c.dataset.value === country);
+          });
+          this.applyFilters();
+        });
+        countryContainer.appendChild(chip);
+      });
+    }
   }
 
   // ============================================================
@@ -178,7 +223,7 @@ class FlowerUI {
   // ============================================================
 
   applyFilters() {
-    const { search, region, month, category } = this.filters;
+    const { search, region, month, category, country } = this.filters;
 
     this.filteredFlowers = this.flowers.filter(flower => {
       // 搜索过滤
@@ -199,6 +244,9 @@ class FlowerUI {
 
       // 类别过滤
       if (category && category !== '全部类别' && flower.category !== category) return false;
+
+      // 国家过滤
+      if (country && country !== '全部' && flower.country !== country) return false;
 
       return true;
     });
@@ -629,25 +677,47 @@ class FlowerUI {
   // ============================================================
 
   initPetalEffect() {
-    const petals = ['🌸', '🌺', '🌼', '🌷', '✿', '❀'];
+    const container = document.getElementById('petals-container');
+    if (!container) return;
+
+    // 花瓣颜色调色板（粉/紫/白/浅黄）
+    const colors = [
+      '#FFB7C5', '#FF87B2', '#FFC1D6', '#EDD9FF',
+      '#F8BBD9', '#FFD6E5', '#E1BEE7', '#FFF0F7',
+      '#FFECB3', '#F3E5F5', '#FCE4EC', '#FFF9C4',
+    ];
+    // 三种动画变体
+    const animations = ['petalDrift', 'petalDrift2', 'petalDrift3'];
+
     const createPetal = () => {
       const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.textContent = petals[Math.floor(Math.random() * petals.length)];
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.fontSize = (10 + Math.random() * 10) + 'px';
-      petal.style.animationDuration = (6 + Math.random() * 8) + 's';
-      petal.style.animationDelay = Math.random() * 2 + 's';
-      document.body.appendChild(petal);
+      petal.className = 'falling-petal';
 
+      const shape = document.createElement('span');
+      shape.className = 'petal-shape';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = 8 + Math.random() * 14;
+      shape.style.background = color;
+      shape.style.width = size + 'px';
+      shape.style.height = size * (0.6 + Math.random() * 0.5) + 'px';
+      petal.appendChild(shape);
+
+      petal.style.left = Math.random() * 100 + 'vw';
+      const anim = animations[Math.floor(Math.random() * animations.length)];
+      const duration = 8 + Math.random() * 10;
+      petal.style.animationName = anim;
+      petal.style.animationDuration = duration + 's';
+      petal.style.animationDelay = Math.random() * 3 + 's';
+
+      container.appendChild(petal);
       petal.addEventListener('animationend', () => petal.remove());
     };
 
-    // 每隔2秒生成一个花瓣
-    setInterval(createPetal, 2000);
-    // 初始生成几个
-    for (let i = 0; i < 5; i++) {
-      setTimeout(createPetal, i * 400);
+    // 持续生成花瓣
+    setInterval(createPetal, 1800);
+    // 初始批量生成
+    for (let i = 0; i < 8; i++) {
+      setTimeout(createPetal, i * 300);
     }
   }
 
