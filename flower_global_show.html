@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌸 全球名花图鉴 · 地球仪版</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- TopoJSON 客户端库，用于解析世界地图数据 -->
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+</head>
+<body>
+
+<!-- ============================================================
+  加载界面
+  ============================================================ -->
+<div id="loading">
+  <div class="loading-flowers">
+    <span class="loading-flower">🌸</span>
+    <span class="loading-flower">🌺</span>
+    <span class="loading-flower">🌼</span>
+    <span class="loading-flower">🌷</span>
+    <span class="loading-flower">🪷</span>
+  </div>
+  <div class="loading-title">全球名花图鉴</div>
+  <div class="loading-subtitle">WORLD FLOWERS ATLAS</div>
+  <div class="loading-bar-container">
+    <div class="loading-bar"></div>
+  </div>
+  <div class="loading-text">正在加载花卉数据...</div>
+</div>
+
+<!-- ============================================================
+  主应用容器
+  ============================================================ -->
+<div id="app">
+
+  <!-- 3D 地球仪容器 -->
+  <div id="globe-container"></div>
+
+  <!-- 平面地图容器 -->
+  <div id="map-container" style="display:none;">
+    <canvas id="world-map-canvas"></canvas>
+  </div>
+
+  <!-- 视图切换 Tab -->
+  <div id="view-tabs">
+    <button class="view-tab active" data-view="globe" title="3D地球仪视图">🌍 地球仪</button>
+    <button class="view-tab" data-view="map" title="平面地图视图">🗺 平面地图</button>
+  </div>
+
+  <!-- 音乐播放按钮 -->
+  <div id="music-widget">
+    <button id="music-btn" title="播放/暂停音乐">🎵</button>
+    <label id="music-upload-btn" title="上传音频文件">
+      📂
+      <input type="file" id="music-file-input" accept="audio/*" style="display:none">
+    </label>
+    <audio id="music-player" loop></audio>
+  </div>
+
+  <!-- 顶部标题栏 -->
+  <div id="header">
+    <!-- 装饰星星 -->
+    <div class="star-decor" style="width:3px;height:3px;top:8px;left:80px;animation-delay:0s;"></div>
+    <div class="star-decor" style="width:2px;height:2px;top:20px;left:120px;animation-delay:0.5s;"></div>
+    <div class="star-decor" style="width:4px;height:4px;top:12px;right:90px;animation-delay:1s;"></div>
+    <div class="star-decor" style="width:2px;height:2px;top:25px;right:140px;animation-delay:0.3s;"></div>
+
+    <div class="header-title">
+      <h1>🌸 全球名花图鉴</h1>
+      <p>WORLD FLOWERS ATLAS · 100+ 种世界名花</p>
+    </div>
+  </div>
+
+  <!-- 统计信息条 -->
+  <div id="stats-bar">
+    <div class="stat-chip flowers" id="stat-flowers">🌸 -- 种花卉</div>
+    <div class="stat-chip regions" id="stat-regions">🌍 -- 个大区</div>
+    <div class="stat-chip countries" id="stat-countries">📍 -- 个国家</div>
+  </div>
+
+  <!-- 侧边控制面板 -->
+  <div id="side-panel">
+    <button id="panel-toggle" title="展开/折叠面板">
+      <span id="panel-toggle-icon">▶</span>
+      <span style="font-size:9px;color:#9575BE;writing-mode:vertical-rl;">筛选</span>
+    </button>
+
+    <!-- 搜索区域 -->
+    <div id="search-section">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="搜索花卉名称、国家..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button class="search-clear" title="清除">✕</button>
+      </div>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div id="filter-section">
+      <div class="filter-group">
+        <div class="filter-label">🌍 按大洲</div>
+        <div class="filter-chips" id="region-filters"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">📅 按花期</div>
+        <div class="month-chips" id="month-filters"></div>
+      </div>
+    </div>
+
+    <!-- 花卉列表 -->
+    <div id="flowers-list"></div>
+  </div>
+
+  <!-- 花卉详情卡片 -->
+  <div id="flower-detail">
+    <!-- 动态填充 -->
+  </div>
+
+  <!-- Tooltip 提示气泡 -->
+  <div id="tooltip">
+    <div class="tooltip-name"></div>
+    <div class="tooltip-info"></div>
+  </div>
+
+  <!-- 底部快捷操作 -->
+  <div id="bottom-actions">
+    <button class="action-btn" id="btn-reset" title="重置视角">🔄 重置视角</button>
+    <button class="action-btn active" id="btn-auto-rotate" title="自动旋转">⏸ 暂停旋转</button>
+    <button class="action-btn" id="btn-random" title="随机跳转花卉">🎲 随机花卉</button>
+  </div>
+
+  <!-- 颜色图例 -->
+  <div id="color-legend">
+    <div class="legend-title">🗺 大陆分布</div>
+    <div class="legend-items">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#FF87B2;"></div>
+        <span>亚洲</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#BF8AE0;"></div>
+        <span>欧洲</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#85D4A0;"></div>
+        <span>美洲</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#FFD94A;"></div>
+        <span>非洲</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#81C2EE;"></div>
+        <span>大洋洲</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+  数据文件
+  ============================================================ -->
+<script src="flowers-data.js"></script>
+
+<!-- ============================================================
+  地球仪模块
+  ============================================================ -->
+<script src="globe.js"></script>
+
+<!-- ============================================================
+  UI 模块
+  ============================================================ -->
+<script src="ui.js"></script>
+
+<!-- ============================================================
+  主入口脚本
+  ============================================================ -->
+<script>
+  // 加载管理器
+  const loader = new LoadingManager();
+
+  // 模拟加载进度
+  const loadSteps = [
+    { progress: 20, text: '初始化 3D 引擎...' },
+    { progress: 45, text: '加载地球纹理...' },
+    { progress: 65, text: '准备花卉数据...' },
+    { progress: 80, text: '创建花卉标记...' },
+    { progress: 95, text: '最后一步...' },
+  ];
+
+  let stepIndex = 0;
+  const loadInterval = setInterval(() => {
+    if (stepIndex < loadSteps.length) {
+      loader.setProgress(loadSteps[stepIndex].progress, loadSteps[stepIndex].text);
+      stepIndex++;
+    } else {
+      clearInterval(loadInterval);
+    }
+  }, 200);
+
+  // DOM 加载完成后初始化
+  window.addEventListener('DOMContentLoaded', () => {
+    // 检查花卉数据是否加载
+    if (typeof FLOWERS_DATA === 'undefined' || !FLOWERS_DATA || FLOWERS_DATA.length === 0) {
+      console.error('ERROR: 花卉数据加载失败。请检查 flowers-data.js 是否正确加载。');
+      document.getElementById('loading').innerHTML = `
+        <div style="
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 20px;
+          background: linear-gradient(135deg, #1a0a2e 0%, #2d1547 100%);
+          color: #FFD6E5;
+        ">
+          <div style="font-size: 48px;">⚠️</div>
+          <div style="font-size: 18px; font-weight: bold;">数据加载失败</div>
+          <div style="font-size: 14px; color: #C3A8DB; text-align: center;">
+            花卉数据加载出错，请刷新页面重试。<br>
+            如问题持续存在，请检查网络连接。
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // 初始化地球仪
+    const globeRenderer = new GlobeRenderer('globe-container');
+
+    // 初始化 UI（传入 globe 引用）
+    const flowerUI = new FlowerUI(globeRenderer);
+    window._flowerUI = flowerUI;
+
+    // 初始化平面地图
+    const worldMap = new WorldMapView(flowerUI);
+
+    // 同步筛选结果到地图
+    const origApply = flowerUI.applyFilters.bind(flowerUI);
+    flowerUI.applyFilters = function() {
+      origApply();
+      worldMap.updateFlowers(flowerUI.filteredFlowers);
+    };
+
+    // 视图切换 Tab
+    document.querySelectorAll('.view-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const view = tab.dataset.view;
+        document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const globeEl = document.getElementById('globe-container');
+        const mapEl = document.getElementById('map-container');
+
+        if (view === 'globe') {
+          globeEl.style.display = '';
+          mapEl.style.display = 'none';
+          document.getElementById('btn-reset').style.display = '';
+          document.getElementById('btn-auto-rotate').style.display = '';
+          document.getElementById('btn-random').style.display = '';
+        } else {
+          globeEl.style.display = 'none';
+          mapEl.style.display = '';
+          document.getElementById('btn-reset').style.display = 'none';
+          document.getElementById('btn-auto-rotate').style.display = 'none';
+          document.getElementById('btn-random').style.display = 'none';
+          worldMap.resize();
+          worldMap.updateFlowers(flowerUI.filteredFlowers);
+        }
+      });
+    });
+
+    // 随机花卉按钮
+    document.getElementById('btn-random').addEventListener('click', () => {
+      flowerUI.jumpToRandom();
+    });
+
+    // ============================================================
+    // 音乐播放器
+    // ============================================================
+    const musicBtn = document.getElementById('music-btn');
+    const musicPlayer = document.getElementById('music-player');
+    const musicFileInput = document.getElementById('music-file-input');
+    let musicPlaying = false;
+
+    function startMusic() {
+      if (musicPlaying) return;
+      musicPlayer.play().then(() => {
+        musicPlaying = true;
+        musicBtn.classList.add('playing');
+      }).catch(() => {});
+    }
+
+    // 尝试加载本地 music.mp3 并自动播放
+    const defaultMusic = new Audio('music.mp3');
+    defaultMusic.addEventListener('canplaythrough', () => {
+      musicPlayer.src = 'music.mp3';
+      musicBtn.classList.add('has-music');
+      // 自动播放
+      startMusic();
+      // 浏览器可能阻止自动播放，监听首次用户交互后重试
+      const retryPlay = () => {
+        startMusic();
+        document.removeEventListener('click', retryPlay);
+        document.removeEventListener('touchstart', retryPlay);
+        document.removeEventListener('keydown', retryPlay);
+      };
+      if (!musicPlaying) {
+        document.addEventListener('click', retryPlay, { once: false });
+        document.addEventListener('touchstart', retryPlay, { once: false });
+        document.addEventListener('keydown', retryPlay, { once: false });
+      }
+    }, { once: true });
+    defaultMusic.addEventListener('error', () => {
+      // 没有本地 music.mp3，等用户上传
+    }, { once: true });
+
+    musicBtn.addEventListener('click', () => {
+      if (!musicPlayer.src || musicPlayer.src === window.location.href) {
+        musicBtn.classList.add('pulse');
+        setTimeout(() => musicBtn.classList.remove('pulse'), 600);
+        return;
+      }
+      if (musicPlaying) {
+        musicPlayer.pause();
+        musicPlaying = false;
+        musicBtn.classList.remove('playing');
+      } else {
+        startMusic();
+      }
+    });
+
+    musicFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      musicPlayer.src = url;
+      musicBtn.classList.add('has-music');
+      startMusic();
+      e.target.value = '';
+    });
+
+    // 完成加载
+    setTimeout(() => {
+      loader.setProgress(100, '加载完成！');
+      setTimeout(() => {
+        loader.hide();
+        // 启动自动旋转
+        globeRenderer.setAutoRotate(true);
+      }, 500);
+    }, 1200);
+  });
+</script>
+
+</body>
+</html>
