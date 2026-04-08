@@ -113,7 +113,7 @@ flower_global_show/
 <details>
 <summary><b>English Version</b></summary>
 
-# 🌸 World Flowers Atlas — Globe Edition
+# 🌸 World Flowers Atlas
 
 An interactive visualization of world-famous flowers, featuring **120 species** across **5 continents and 35 countries/regions**. Browse via a 3D globe or a flat world map, and click on markers to explore flower details.
 
