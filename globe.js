@@ -583,19 +583,34 @@ class GlobeRenderer {
     const { lat, lng } = flower.location;
     const pos = this.latLngToVector3(lat, lng, 1.0).normalize();
 
-    // globe 使用 YXZ 欧拉角（先 Y 后 X），相机在 +Z 方向。
-    // 要让 pos 旋转后指向 +Z：
-    // Step 1: rotY 把 pos 在 XZ 平面的投影转到 +Z 方向
-    const targetY = -Math.atan2(pos.x, pos.z);
-    // Step 2: rotX 把 Y 分量压到 Z 轴上
-    const targetX = -Math.asin(Math.max(-1, Math.min(1, pos.y)));
+    // globe 使用 YXZ 欧拉角：R = Ry(a) * Rx(b)，相机在 +Z 方向。
+    // 要让 R * pos = (0,0,1)，即 pos = Rx(-b) * Ry(-a) * (0,0,1)。
+    // 展开得：pos.x = -sin(a), pos.y = cos(a)*sin(b), pos.z = cos(a)*cos(b)
+    // 我们要求 rotX=b 在 [-PI/2, PI/2]（避免地球翻转），即 cos(b) >= 0。
 
-    // 最小旋转距离：将 targetY 调整到 currentRotation.y 的 ±PI 范围内
-    let dy = targetY - this.currentRotation.y;
+    let rotY, rotX;
+    if (pos.z >= 0) {
+      // cos(a) >= 0 的解：a 在 [-PI/2, PI/2]
+      rotY = Math.asin(Math.max(-1, Math.min(1, -pos.x)));
+      rotX = Math.atan2(pos.y, pos.z);
+    } else {
+      // cos(a) < 0 的解：除以 -|cos(a)| 翻转使 cos(b) > 0
+      const negCosA = -Math.sqrt(Math.max(0, 1 - pos.x * pos.x));
+      rotX = Math.atan2(pos.y / negCosA, pos.z / negCosA);
+      // rotY 有两个等价值，选离 currentRotation.y 更近的
+      const base = Math.asin(Math.max(-1, Math.min(1, -pos.x)));
+      const a1 = Math.PI - base;
+      const a2 = -Math.PI - base;
+      const wrap = v => v - Math.round(v / (2 * Math.PI)) * (2 * Math.PI);
+      rotY = Math.abs(wrap(a1 - this.currentRotation.y)) <= Math.abs(wrap(a2 - this.currentRotation.y)) ? a1 : a2;
+    }
+
+    // 最小旋转距离：将 rotY 调整到 currentRotation.y 的 ±PI 范围内
+    let dy = rotY - this.currentRotation.y;
     dy = dy - Math.round(dy / (2 * Math.PI)) * (2 * Math.PI);
     this.targetRotation.y = this.currentRotation.y + dy;
+    this.targetRotation.x = rotX;
 
-    this.targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetX));
     this.autoRotate = false;
   }
 
