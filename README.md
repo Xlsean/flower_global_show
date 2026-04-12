@@ -2,6 +2,8 @@
 
 一个交互式的全球名花可视化项目，收录了 **120 种世界名花**，覆盖 **5 大洲、35 个国家/地区**。支持 3D 地球仪和平面地图两种浏览方式，点击标记即可查看花卉详情。
 
+> 本项目由作者与 [CodeBuddy](https://www.codebuddy.ai/) 共同完成。
+
 ## 预览
 
 直接在浏览器中打开 `flower_global_show.html` 即可使用。
@@ -50,7 +52,21 @@ flower_global_show/
 
 - 支持格式：`.jpg`、`.webp`、`.png`、`.jpeg`
 - 命名规则：使用花卉的中文名，如 `樱花.jpg`、`薰衣草.png`
+- 图片加载优先级：**页面上传 > flowers/ 本地图片 > Wikipedia 图片**
 - 也可以在详情卡片中点击 **📷 上传图片** 手动上传
+
+## 图片版权声明
+
+本项目中的景点图片来自以下来源，**项目本身不包含任何图片文件**，仅通过 URL 链接引用：
+
+- **Wikimedia Commons**：图片采用 CC BY-SA、CC BY 或公有领域等开放许可证，版权归原作者所有。根据 Wikimedia 的使用政策，通过 URL 链接引用（热链接）是被允许的。
+- **Wikipedia API**：当预设链接失效时，通过 Wikipedia 公开 API 动态获取缩略图，这是 API 的正常使用方式。
+
+如果你 fork 或使用本项目，请注意：
+
+- 图片版权属于各自的原作者，非本项目的许可范围
+- 若需将图片下载后本地使用，请遵守各图片的原始许可证（通常需要署名）
+- `flowers/` 目录下的本地图片由用户自行提供，不包含在本项目许可范围内
 
 ### 背景音乐
 
@@ -69,17 +85,32 @@ flower_global_show/
 
 收录 120 种世界名花，每种花包含：
 
-| 字段 | 说明 |
-|------|------|
-| 名称（中/英文） | 花卉的中英文名称 |
-| 所属国家/地区 | 该花最具代表性的国家 |
-| 地理坐标 | 用于在地球仪上定位 |
-| 花期 | 开花月份分布 |
-| 花朵颜色 | 常见花色 |
-| 分类 | 木本花卉、草本花卉、球根花卉等 |
-| 简介与观赏指南 | 文化背景、观赏建议 |
+| 字段       | 说明              |
+| -------- | --------------- |
+| 名称（中/英文） | 花卉的中英文名称        |
+| 所属国家/地区  | 该花最具代表性的国家      |
+| 地理坐标     | 用于在地球仪上定位       |
+| 花期       | 开花月份分布          |
+| 花朵颜色     | 常见花色            |
+| 分类       | 木本花卉、草本花卉、球根花卉等 |
+| 简介与观赏指南  | 文化背景、观赏建议       |
 
 区域分布：亚洲 60 种、欧洲 21 种、美洲 19 种、非洲 12 种、大洋洲 8 种。
+
+## ## 图片版权声明
+
+[](https://github.com/Xlsean/landscape_global_show#%E5%9B%BE%E7%89%87%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E)
+
+本项目中的景点图片来自以下来源，**项目本身不包含任何图片文件**，仅通过 URL 链接引用：
+
+- **Wikimedia Commons**：图片采用 CC BY-SA、CC BY 或公有领域等开放许可证，版权归原作者所有。根据 Wikimedia 的使用政策，通过 URL 链接引用（热链接）是被允许的。
+- **Wikipedia API**：当预设链接失效时，通过 Wikipedia 公开 API 动态获取缩略图，这是 API 的正常使用方式。
+
+如果你 fork 或使用本项目，请注意：
+
+- 图片版权属于各自的原作者，非本项目的许可范围
+- 若需将图片下载后本地使用，请遵守各图片的原始许可证（通常需要署名）
+- `landscapes/` 目录下的本地图片由用户自行提供，不包含在本项目许可范围内
 
 ## 许可证
 
@@ -98,9 +129,12 @@ flower_global_show/
 
 ### 免责声明
 
-- 本项目中的花卉图片链接来自 Wikipedia Commons，其版权归原作者所有
-- `flowers/` 目录下的本地图片由用户自行提供，不包含在本项目许可范围内
 - 花卉数据仅供参考，不保证完全准确
+- `flowers/` 目录下的本地图片由用户自行提供，不包含在本项目许可范围内
+
+### 图片版权声明
+
+本项目中花卉详情卡片使用的插图均链接自 [Wikimedia Commons](https://commons.wikimedia.org/)，这些图片由各自的原作者上传并采用自由许可协议发布（包括但不限于 CC BY-SA 4.0、CC BY 3.0、CC0 公有领域贡献等）。本项目不存储、修改或重新分发这些图片，仅通过 URL 引用。各图片的具体版权信息和许可协议请参见其在 Wikimedia Commons 上的原始页面。如果您是图片的版权持有者并对引用有异议，请通过 Issue 联系我们，我们将及时处理。
 
 ---
 
@@ -116,6 +150,8 @@ flower_global_show/
 # 🌸 World Flowers Atlas
 
 An interactive visualization of world-famous flowers, featuring **120 species** across **5 continents and 35 countries/regions**. Browse via a 3D globe or a flat world map, and click on markers to explore flower details.
+
+> This project was co-created by the author and [CodeBuddy](https://www.codebuddy.ai/).
 
 ## Preview
 
@@ -165,6 +201,7 @@ Place image files named after the flower's Chinese name in the `flowers/` direct
 
 - Supported formats: `.jpg`, `.webp`, `.png`, `.jpeg`
 - Example: `樱花.jpg` (Cherry Blossom), `薰衣草.png` (Lavender)
+- Loading priority: **Page upload > flowers/ local image > Wikipedia image**
 - You can also upload images manually via the **📷 Upload** button in the detail card
 
 ### Background Music
@@ -184,17 +221,30 @@ Place image files named after the flower's Chinese name in the `flowers/` direct
 
 120 species, each containing:
 
-| Field | Description |
-|-------|-------------|
-| Name (CN / EN) | Chinese and English names |
+| Field            | Description                                |
+| ---------------- | ------------------------------------------ |
+| Name (CN / EN)   | Chinese and English names                  |
 | Country / Region | Most representative country for the flower |
-| Coordinates | For positioning on the globe |
-| Bloom Season | Blooming months |
-| Petal Colors | Common flower colors |
-| Category | Tree, herb, bulb, aquatic, etc. |
-| Guide | Cultural background and viewing tips |
+| Coordinates      | For positioning on the globe               |
+| Bloom Season     | Blooming months                            |
+| Petal Colors     | Common flower colors                       |
+| Category         | Tree, herb, bulb, aquatic, etc.            |
+| Guide            | Cultural background and viewing tips       |
 
 Regional distribution: Asia 60, Europe 21, Americas 19, Africa 12, Oceania 8.
+
+## Image Copyright Notice
+
+Landmark images in this project come from the following sources. **The project itself does not contain any image files** — it only references them via URLs:
+
+- **Wikimedia Commons**: Images are under open licenses such as CC BY-SA, CC BY, or Public Domain. Copyrights belong to their respective authors. Hotlinking is permitted per Wikimedia's usage policy.
+- **Wikipedia API**: When preset links fail, thumbnails are dynamically fetched via Wikipedia's public API, which is a normal use of the API.
+
+If you fork or use this project, please note:
+
+- Image copyrights belong to their respective original authors and are outside the scope of this project's license
+- If you download images for local use, please comply with each image's original license (usually requiring attribution)
+- Images in the `flowers/` directory are user-provided and not covered by this project's license
 
 ## Feedback & Contributing
 

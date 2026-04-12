@@ -57,7 +57,6 @@ class FlowerUI {
    */
   _preloadLocalImages() {
     const extensions = ['jpg', 'webp', 'png', 'jpeg'];
-    // 收集所有不重复的花名
     const names = [...new Set(this.flowers.map(f => f.name))];
     names.forEach(name => {
       this._tryLoadLocalImage(name, extensions, 0);
@@ -65,12 +64,11 @@ class FlowerUI {
   }
 
   _tryLoadLocalImage(name, extensions, idx) {
-    if (idx >= extensions.length) return; // 全部尝试完毕，无可用图片
+    if (idx >= extensions.length) return;
     const path = `flowers/${name}.${extensions[idx]}`;
     const img = new Image();
     img.onload = () => {
       this.localImages.set(name, path);
-      // 如果当前详情卡片正在显示这朵花，立即更新图片
       this._updateDetailImageIfNeeded(name, path);
     };
     img.onerror = () => {
@@ -383,6 +381,7 @@ class FlowerUI {
       const img = document.createElement('img');
       img.className = 'detail-image loaded';
       img.id = `detail-img-${flowerId}`;
+      img.referrerPolicy = 'no-referrer';
       img.src = url;
       img.alt = flowerId;
       wrap.insertBefore(img, wrap.firstChild);
@@ -518,6 +517,7 @@ class FlowerUI {
           <img class="detail-image${isLocal ? ' loaded' : ''}" 
                id="detail-img-${flower.id}"
                src="${imgSrc}" alt="${flower.name}"
+               referrerpolicy="no-referrer"
                onerror="this.style.display='none';document.getElementById('detail-img-placeholder-${flower.id}').style.display='flex'"
                ${!isLocal && flower.wikiImage ? `onload="this.classList.add('loaded')"` : ''} />
           <div class="detail-image-loading" id="detail-img-placeholder-${flower.id}" style="display:none">🌸</div>
