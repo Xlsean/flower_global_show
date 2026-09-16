@@ -8,6 +8,10 @@
 
 直接在浏览器中打开 `flower_global_show.html` 即可使用。
 
+<img width="1724" height="1074" alt="image" src="https://github.com/user-attachments/assets/dbc48f97-848d-4b22-a01a-83342d2c6602" />
+<img width="1407" height="1068" alt="image" src="https://github.com/user-attachments/assets/ede41074-13c0-4e72-825a-3d7ee62c743a" />
+<img width="1723" height="1072" alt="image" src="https://github.com/user-attachments/assets/eae25c10-795c-409f-8a51-f9ee2876d943" />
+
 ## 功能特色
 
 - **3D 地球仪视图**：基于 Three.js 的可交互地球仪，花卉标记分布在对应的地理位置上，支持拖拽旋转、缩放和自动旋转
